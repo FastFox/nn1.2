@@ -38,6 +38,7 @@ function task_1(filename)
     disp(['Std: ' sprintf('%f', std(output))])
     
     %Estimate all six parameters of the corresponding Gaussian mixture of two normal distributions (i.e., pA, pB, µA, µB, ?A, and ?B) using three different methods:
+    %METHOD 1:
     load('mix2.mat')
     values = x;
     classification = class(:);
@@ -54,8 +55,51 @@ function task_1(filename)
     end
     disp('Part 3:');
     disp(['pA: ' sprintf('%f', size(classA')/size(classification(:))) ', pB: ' sprintf('%f', size(classB')/size(classification(:))) ', µA: ' sprintf('%f', mean(classA)) ', µB: ' sprintf('%f', mean(classB)) ', sA: ' sprintf('%f', std(classA)) ', and sB: ' sprintf('%f', std(classB))]);
+    
+    %METHOD 2:
+    iterations = ((0.5-0.1)/0.01) * ((65-40)/0.1) * ((65-40)/0.1)  * ((4-1)/0.01) * ((4-1)/0.01);
+    disp(['Number of iterations: ' sprintf('%i', iterations)]);
+    counter = 1;
+    done = false;
+    tic
+    for pA=0.1:0.01:0.5 
+        for muA=40:0.1:65
+            for muB=40:0.1:65
+                for sigmaA=1:0.01:4
+                    for sigmaB=1:0.01:4
+                        ll(values,pA,1-pA,muA,muB,sigmaA,sigmaB);
+                        counter = counter + 1;
+                        if(counter == 10000)
+                            done = true;
+                            time = toc;
+                            disp(['Time to complete for-loops: ' sprintf('%i', (iterations/10000)*time) ' seconds.']);
+                            break;
+                        end
+                    end
+                    if done
+                        break;
+                    end
+                end
+                if done
+                    break;
+                end                
+            end
+            if done
+                break;
+            end            
+        end
+        if done
+            break;
+        end        
+    end
+    %METHOD 3:    
+    
 end
 
 function chance = log_likelihood(sample,distr,s)
     chance = sum(log(distr(sample,s)));
+end
+
+function chance = ll(x, pA, pB, muA, muB, sigmaA, sigmaB)
+    chance = sum(log(pA*normpdf(x,muA,sigmaA)+pB*normpdf(x,muB,sigmaB)));
 end
