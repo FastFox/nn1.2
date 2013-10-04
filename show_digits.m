@@ -30,28 +30,76 @@ end
 centerDistances = zeros(10, 10);
 for i = 0:9
 	for j = 0:9
-		centerDistances(i + 1, j + 1) = sum(power(center(i + 1) - center(j + 1), 2));
+		if i == j
+			centerDistances(i + 1, j + 1) = 0;
+		elseif i < j
+			centerDistances(i + 1, j + 1) = sum(power(center(i + 1, :) - center(j + 1, :), 2));
+			centerDistances(j + 1, i + 1) = centerDistances(i + 1, j + 1);
+		end
 	end
 end
 
-%centerDistances % A lot of distances of 0, which means similar, and so the classifier does not have a high expected accuracy.
+avgd = zeros(10, 1); % Average distance per digit (standard deviations)
+for d = 0:9
+	avgd(d + 1) = mean(nonzeros(centerDistances(d + 1, :)));
+end
 
+%centerDistances; % No low distances, so it's actually a pretty good classifier. 
+zdist = zeros(10, 10);
+for i = 0:9
+	for j = 0:9
+		if i == j
+			zdist(i + 1, j + 1) = 0;
+		elseif i < j
+			%zdist(i + 1, j + 1) = (avgd(i + 1), avgd(j + 1)) / centerDistances(i + 1, j + 1);
+			zdist(i + 1, j + 1) = (avgd(i + 1) + avgd(j + 1) ) /centerDistances(i + 1, j + 1);
+			zdist(j + 1, i + 1) = zdist(i + 1, j + 1);
+		end
+	end
+end
 
+%zdist
+
+% confusion matrix
+cm = zeros(10, 10); % predicted, actual
 
 % Calculate per image of the training set the distance and compare it with the center of the training set per digit.
 distances = zeros(10, 1);
 index = 1;
-for index = 1:2
+for index = 1:length(training)
 	for d = 0:9
-		distances(d + 1) = sum(power(training(:, index) - center(d + 1), 2));
-		%distances(d + 1) = dist(training(:, index) - center(d + 1)); % Does not work in octave
-		%distances(d + 1) = sum(abs(training(:, index) - center(d + 1)));
+		distances(d + 1) = sum(power(training(:, index)' - center(d + 1, :), 2));
 	end
 	[minimum, minimumIndex] = min(distances);
-	disp(['Digit is recognized as ' num2str(minimumIndex - 1) '. It should be digit ' num2str(trainingd(index))]);
-	%x=reshape(training(:, index), 16, 16)';
-	%imagesc(x);
+	cm(minimumIndex, trainingd(index) + 1) = cm(minimumIndex, trainingd(index) + 1) + 1;
 end
+
+ac = trace(cm) / length(training); % Accuracy for training set
+ac
+
+% confusion matrix
+cm = zeros(10, 10); % predicted, actual
+
+% Calculate per image of the test set the distance and compare it with the center of the training set per digit.
+distances = zeros(10, 1);
+index = 1;
+for index = 1:length(testdata)
+	for d = 0:9
+		distances(d + 1) = sum(power(testdata(:, index)' - center(d + 1, :), 2));
+	end
+	[minimum, minimumIndex] = min(distances);
+	cm(minimumIndex, testdatad(index) + 1) = cm(minimumIndex, testdatad(index) + 1) + 1;
+end
+
+ac = trace(cm) / length(testdata); % Accuracy for test set
+ac % Lower accuracy compared of the accuray of the training set, as expected.
+
+cm % The digits 1 and 7 are difficult to classify (as you can imagine), and also a little bit 2 and 8. 
+
+%for i = 1:10
+%	ac = ac + cm(i, i);
+%end
+%ac = 
 
 
 % Show all images in de training set.
