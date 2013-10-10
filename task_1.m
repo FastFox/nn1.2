@@ -115,12 +115,15 @@ function task_1(filename)
     mix = gmminit(mix, values, options);
     
     options = zeros(1,18);
-    options(1)  = -1;	    
+    options(1)  = 1;	    
     options(14) = 20;    %VRAGEN! Hij doet het niet als je maar 10 iteraties doet
     %Use EM to estimate the parameters of our Gaussian mixture model
+    tic
     [mix, options, errlog] = gmmem(mix, values, options);
+    toc
     disp(['Centres: ' num2str(mix.centres(1)) '    ' num2str(mix.centres(2))]);
     disp(['Sigmas: ' num2str(sqrt(mix.covars))]);
+    disp(['Priors: ' num2str(mix.priors)]);
 end
 
 function chance = log_likelihood(sample,distr,s)
