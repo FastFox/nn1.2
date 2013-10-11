@@ -11,22 +11,62 @@ load digits
 %amount = zeros(10, 1);
 %total = zeros(10, 1);
 
-if false
+if true
 	center = zeros(10, 256);
+    maxNormDist = zeros(10, 1);
+    maxRadius = zeros(10, 1);
+    stdss = zeros(10, 1);
 
-	% Calculate center. It results in an average digit per digit.
+	% Calculate features
 	for d = 0:9
 		indices_by_digit = find( trainingd == d );
 		pixels = training(:, indices_by_digit);
+       
+        % Center
 		center(d + 1, :) = mean(pixels, 2);
-
+        
+        % Diameter: Dit klopt! (Hopelijk, Waarschijnlijk, Ok, we gaan ervan
+        % uit. Waarschijnlijk niet.Eigenlijk klopt er niks van. Het is
+        % fout...
+        normsDist = zeros(size(pixels, 2), size(pixels, 2));
+        for i = 1:size(pixels,2)
+            for j = i+1:size(pixels,2)
+                normsDist(i, j) = norm(pixels(:, i) - pixels(:, j));
+            end            
+        end
+        
+        maxNormDist(d + 1) = max(normsDist(:));
+        
+        % Radius
+        radius = zeros(10, size(pixels,2));
+        size(pixels,2);
+        for i = 1:size(pixels,2)
+           radius(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
+        end
+        
+        maxRadius(d + 1) = max(radius(:));
+        
+        
+        % Std
+        stds = zeros(10, size(pixels, 2));
+        size(pixels,2);
+        for i = 1:size(pixels,2)
+           stds(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
+        end
+        
+        stdss(d + 1) = std(radius(:));
+        
+       % mean(std(pixels))
+        
 		% Show average digit, per digit
 		if false
 			imagesc(reshape(center(d + 1, :), 16, 16)');
 			title(['\bf Digit: ' num2str(d)])
 			pause
 		end
-	end
+    end
+    stdss
+    %maxNormDist, maxRadius
 
 	centerDistances = zeros(10, 10);
 	for i = 0:9
@@ -43,7 +83,8 @@ if false
 	avgd = zeros(10, 1); % Average distance per digit (standard deviations)
 	for d = 0:9
 		avgd(d + 1) = mean(nonzeros(centerDistances(d + 1, :)));
-	end
+    end
+    %avgd
 
 	%centerDistances; % No low distances, so it's actually a pretty good classifier. 
 	zdist = zeros(10, 10);
@@ -53,7 +94,7 @@ if false
 				zdist(i + 1, j + 1) = 0;
 			elseif i < j
 				%zdist(i + 1, j + 1) = (avgd(i + 1), avgd(j + 1)) / centerDistances(i + 1, j + 1);
-				zdist(i + 1, j + 1) = (avgd(i + 1) + avgd(j + 1) ) /centerDistances(i + 1, j + 1);
+				zdist(i + 1, j + 1) = (avgd(i + 1) + avgd(j + 1) ) / centerDistances(i + 1, j + 1);
 				zdist(j + 1, i + 1) = zdist(i + 1, j + 1);
 			end
 		end
@@ -131,9 +172,10 @@ gprime = @(y, beta) beta * g(y, beta) * (1 - g(y, beta));
 %size(trainingd)
 %size(training'(1:3, :))
 
-if true
+if false
 %	input = [0 0 0; 0 0 1;	0 1 0; 0 1 1; 1 0 0; 1 0 1; 1 1 0; 1 1 1];
-	input = training'(1:3, :);
+	%input = training'(1:3, :);
+    input = training(:, 1:3)';
 	numIn = size(input, 1);
 	%target = [0; 0; 0; 0; 0; 0; 0; 1];
 	target = trainingd;
@@ -176,4 +218,4 @@ if true
 
 end % end if false
 
-trainingd(1:3)
+trainingd(1:3);
