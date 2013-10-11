@@ -44,7 +44,7 @@ function task_1(filename)
     disp(['Mean: ' sprintf('%f', mean(output))])
     disp(['Std: ' sprintf('%f', std(output))])
     
-    %Estimate all six parameters of the corresponding Gaussian mixture of two normal distributions (i.e., pA, pB, µA, µB, ?A, and ?B) using three different methods:
+    %Estimate all six parameters of the corresponding Gaussian mixture of two normal distributions (i.e., pA, pB, ï¿½A, ï¿½B, ?A, and ?B) using three different methods:
     %METHOD 1: Directly calculate the parameters
     load('mix2.mat')
     values = x;
@@ -64,7 +64,7 @@ function task_1(filename)
     disp(char(10));
     disp('Part 3:');
     disp('1:');
-    disp(['pA: ' sprintf('%f', size(classA')/size(classification(:))) ', pB: ' sprintf('%f', size(classB')/size(classification(:))) ', µA: ' sprintf('%f', mean(classA)) ', µB: ' sprintf('%f', mean(classB)) ', sA: ' sprintf('%f', std(classA,1)) ', and sB: ' sprintf('%f', std(classB,1))]);
+    disp(['pA: ' sprintf('%f', size(classA')/size(classification(:))) ', pB: ' sprintf('%f', size(classB')/size(classification(:))) ', ï¿½A: ' sprintf('%f', mean(classA)) ', ï¿½B: ' sprintf('%f', mean(classB)) ', sA: ' sprintf('%f', std(classA,1)) ', and sB: ' sprintf('%f', std(classB,1))]);
     
     %METHOD 2: Try to estimate the parameters with brute-force
     disp('2:');
@@ -116,7 +116,7 @@ function task_1(filename)
     
     options = zeros(1,18);
     options(1)  = 1;	    
-    options(14) = 20;    %VRAGEN! Hij doet het niet als je maar 10 iteraties doet
+    options(14) = 20; 
     %Use EM to estimate the parameters of our Gaussian mixture model
     tic
     [mix, options, errlog] = gmmem(mix, values, options);
@@ -131,6 +131,5 @@ function chance = log_likelihood(sample,distr,s)
 end
 
 function chance = ll(x, pA, pB, muA, muB, sigmaA, sigmaB)
-    %VRAGEN of dit klopt
-    chance = sum(log(pA*normpdf(x,muA,sigmaA)+pB*normpdf(x,muB,sigmaB)));
+    chance = sum(log(  pA*normpdf(x,muA,sigmaA)  +  pB*normpdf(x,muB,sigmaB)));
 end
