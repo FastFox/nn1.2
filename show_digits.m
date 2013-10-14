@@ -11,52 +11,57 @@ load digits
 %amount = zeros(10, 1);
 %total = zeros(10, 1);
 
-if true
+if false
 	center = zeros(10, 256);
-    maxNormDist = zeros(10, 1);
-    maxRadius = zeros(10, 1);
-    stdss = zeros(10, 1);
+  maxNormDist = zeros(10, 1);
+  maxRadius = zeros(10, 1);
+  stdss = zeros(10, 1);
 
 	% Calculate features
 	for d = 0:9
 		indices_by_digit = find( trainingd == d );
 		pixels = training(:, indices_by_digit);
        
-        % Center
+    % Center
 		center(d + 1, :) = mean(pixels, 2);
         
-        % Diameter: Dit klopt! (Hopelijk, Waarschijnlijk, Ok, we gaan ervan
-        % uit. Waarschijnlijk niet.Eigenlijk klopt er niks van. Het is
-        % fout...
-        normsDist = zeros(size(pixels, 2), size(pixels, 2));
-        for i = 1:size(pixels,2)
-            for j = i+1:size(pixels,2)
-                normsDist(i, j) = norm(pixels(:, i) - pixels(:, j));
-            end            
-        end
+    % Diameter: Dit klopt! (Hopelijk, Waarschijnlijk, Ok, we gaan ervan
+    % uit. Waarschijnlijk niet.Eigenlijk klopt er niks van. Het is
+    % fout...
+    normsDist = zeros(size(pixels, 2), size(pixels, 2));
+		size(pixels, 2)
+    for i = 1:size(pixels,2)
+      for j = i+1:size(pixels,2)
+      %for j = 1:size(pixels,2)
+     		normsDist(i, j) = norm(pixels(:, i) - pixels(:, j));
+				%normDist(i, j) = norm(minus(pixels(:, i), pixels(:, j)));
+   		end            
+    end
         
-        maxNormDist(d + 1) = max(normsDist(:));
+		%size(normsDist(:))
+		%size(normsDist())
+    maxNormDist(d + 1) = max(normsDist(:));
+      
+    % Radius
+    radius = zeros(10, size(pixels,2));
+    size(pixels,2);
+    for i = 1:size(pixels,2)
+ 	   radius(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
+    end
         
-        % Radius
-        radius = zeros(10, size(pixels,2));
-        size(pixels,2);
-        for i = 1:size(pixels,2)
-           radius(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
-        end
-        
-        maxRadius(d + 1) = max(radius(:));
+    maxRadius(d + 1) = max(radius(:));
         
         
-        % Std
-        stds = zeros(10, size(pixels, 2));
-        size(pixels,2);
-        for i = 1:size(pixels,2)
-           stds(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
-        end
+    % Std
+    stds = zeros(10, size(pixels, 2));
+    size(pixels,2);
+    for i = 1:size(pixels,2)
+  	  stds(d + 1, i) = norm(center(d + 1, :) - pixels(:, i)'); 
+    end
         
-        stdss(d + 1) = std(radius(:));
+    %stdss(d + 1) = std(radius(:));
         
-       % mean(std(pixels))
+    % mean(std(pixels))
         
 		% Show average digit, per digit
 		if false
@@ -64,9 +69,10 @@ if true
 			title(['\bf Digit: ' num2str(d)])
 			pause
 		end
-    end
-    stdss
-    %maxNormDist, maxRadius
+  end % End for every digit
+  %stdss
+  maxNormDist
+ %	maxRadius
 
 	centerDistances = zeros(10, 10);
 	for i = 0:9
@@ -79,6 +85,8 @@ if true
 			end
 		end
 	end
+
+
 
 	avgd = zeros(10, 1); % Average distance per digit (standard deviations)
 	for d = 0:9
@@ -171,44 +179,64 @@ gprime = @(y, beta) beta * g(y, beta) * (1 - g(y, beta));
 
 %size(trainingd)
 %size(training'(1:3, :))
+more off; % Outputting information while running
 
-if false
+if true
 %	input = [0 0 0; 0 0 1;	0 1 0; 0 1 1; 1 0 0; 1 0 1; 1 1 0; 1 1 1];
 	%input = training'(1:3, :);
-    input = training(:, 1:3)';
-	numIn = size(input, 1);
+  input = training(:, 1:3)';
+  %input = training()';
+	numIn = size(input, 1)
 	%target = [0; 0; 0; 0; 0; 0; 0; 1];
-	target = trainingd;
+	%target = trainingd(1:3)
+	target = zeros(3, 10);
+	for i = 1:3
+		target(i, trainingd(i) + 1) = 1;
+	end
+	%target = trainingd()
+	target
 	bias = -1;
 	alpha = 0.7; % Learning rate
 	beta = 1.0;
 	rand('state', sum(100 * clock));
-	weights = -1 * 2. * rand(size(input, 2) + 1, 1);
+	weights = -1 * 2. * rand(size(input, 2) + 1, 10);
+	%size(weights)
 
-	iterations = 100;
+	iterations = 10000;
 	for i = 1:iterations
-		out = zeros(numIn, 1);
+		if mod(i, 100) == 1
+			i
+		end
+		out = zeros(numIn, 10);
 		for j = 1:numIn
 			%y = bias * weights(1, 1) + input(j, 1) * weights(2, 1) + input(j, 2) * weights(3, 1);
-			y = bias * weights(1, 1);
-			for k = 1:size(input, 2)
-				y = y + input(j, k) * weights(k + 1);
+			for d = 1:10
+				y = bias * weights(1, d);
+				for k = 1:size(input, 2)
+					y = y + input(j, k) * weights(k + 1, d);
+				end
+				%y
+
+				%out(j) = y;
+				%out(j) = 1 / (1 + exp(-beta * y));
+				if 1 / (1 + exp(-beta * y)) > 0.5
+					out(j, d) = 1;
+				else
+					out(j, d) = 0;
+				end
+
+				%if out(j) > 0.5 % Hard Threshold
+				%	out(j) = 1;
+				%else
+				%	out(j) = 0;
+				%end
+
+				delta = target(j, d) - out(j, d);
+				weights(1, d) = weights(1, d) + alpha * bias * delta;
+				for k = 1:size(input, 2)
+					weights(k + 1) = weights(k + 1, d) + alpha * input(j, k) * delta;
+				end	
 			end
-			%y
-
-			%out(j) = y;
-			out(j) = 1 / (1 + exp(-beta * y));
-			%if out(j) > 0.5 % Hard Threshold
-			%	out(j) = 1;
-			%else
-			%	out(j) = 0;
-			%end
-
-			delta = target(j) - out(j);
-			weights(1, 1) = weights(1, 1) + alpha * bias * delta;
-			for k = 1:size(input, 2)
-				weights(k + 1) = weights(k + 1) + alpha * input(j, k) * delta;
-			end	
 			%weights(3, 1) = weights(3, 1) + alpha * input(j, 2) * delta;							
 			%weights(4, 1) = weights(4, 1) + alpha * input(j, 3) * delta;							
 		end
@@ -216,6 +244,18 @@ if false
 
 	out
 
-end % end if false
 
-trainingd(1:3);
+	trainingd(1:3)
+	for i=1:0
+				x=training(:,i); %the i-th row
+
+
+				%amount(trainingd(i) + 1) = amount(trainingd(i) + 1) + 1;
+				%total(trainingd(i) + 1) = amount(trainingd(i) + 1) + mean(x);
+				x=reshape(x, 16, 16); %reorganize it into a 16x16 array
+				x=x'; %rotate it
+				imagesc(x); %display the image
+				title(['\bf Digit: ' num2str(trainingd(i))])
+			pause %press anything to continue
+	end
+end % end if false
