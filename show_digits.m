@@ -63,6 +63,7 @@ if false
         
     % mean(std(pixels))
         
+		target
 		% Show average digit, per digit
 		if false
 			imagesc(reshape(center(d + 1, :), 16, 16)');
@@ -182,19 +183,23 @@ gprime = @(y, beta) beta * g(y, beta) * (1 - g(y, beta));
 more off; % Outputting information while running
 
 if true
+	cm = zeros(10, 10); % predicted, actual
 %	input = [0 0 0; 0 0 1;	0 1 0; 0 1 1; 1 0 0; 1 0 1; 1 1 0; 1 1 1];
 	%input = training'(1:3, :);
-  input = training(:, 1:3)';
+	amount = 3;
+  input = training(:, 1:amount)';
   %input = training()';
-	numIn = size(input, 1)
+	numIn = size(input, 1);
 	%target = [0; 0; 0; 0; 0; 0; 0; 1];
 	%target = trainingd(1:3)
-	target = zeros(3, 10);
-	for i = 1:3
-		target(i, trainingd(i) + 1) = 1;
-	end
+	%target = zeros(3, 1);
+	%for i = 1:3
+	%	target(i, 1) = 1;
+	%end
+	%target(1, 1) = 1;
+
 	%target = trainingd()
-	target
+	%target
 	bias = -1;
 	alpha = 0.7; % Learning rate
 	beta = 1.0;
@@ -202,15 +207,25 @@ if true
 	weights = -1 * 2. * rand(size(input, 2) + 1, 10);
 	%size(weights)
 
-	iterations = 10000;
-	for i = 1:iterations
-		if mod(i, 100) == 1
-			i
-		end
-		out = zeros(numIn, 10);
+	%d = 5;
+	for d = 1:10
+		target = zeros(amount, 10);
 		for j = 1:numIn
-			%y = bias * weights(1, 1) + input(j, 1) * weights(2, 1) + input(j, 2) * weights(3, 1);
-			for d = 1:10
+			if trainingd(j) == d
+				target(j, d + 1) = 1;
+			end
+		end
+
+		%target
+
+		iterations = 100;
+		for i = 1:iterations
+			if mod(i, 100) == 1
+				i;
+			end
+			out = zeros(numIn, 1);
+			for j = 1:numIn
+				%y = bias * weights(1, 1) + input(j, 1) * weights(2, 1) + input(j, 2) * weights(3, 1);
 				y = bias * weights(1, d);
 				for k = 1:size(input, 2)
 					y = y + input(j, k) * weights(k + 1, d);
@@ -220,32 +235,68 @@ if true
 				%out(j) = y;
 				%out(j) = 1 / (1 + exp(-beta * y));
 				if 1 / (1 + exp(-beta * y)) > 0.5
-					out(j, d) = 1;
+					out(j, 1) = 1;
 				else
-					out(j, d) = 0;
+					out(j, 1) = 0;
 				end
 
-				%if out(j) > 0.5 % Hard Threshold
-				%	out(j) = 1;
-				%else
-				%	out(j) = 0;
-				%end
-
-				delta = target(j, d) - out(j, d);
+				delta = target(j, d) - out(j, 1);
 				weights(1, d) = weights(1, d) + alpha * bias * delta;
 				for k = 1:size(input, 2)
-					weights(k + 1) = weights(k + 1, d) + alpha * input(j, k) * delta;
+					weights(k + 1, d) = weights(k + 1, d) + alpha * input(j, k) * delta;
 				end	
 			end
-			%weights(3, 1) = weights(3, 1) + alpha * input(j, 2) * delta;							
-			%weights(4, 1) = weights(4, 1) + alpha * input(j, 3) * delta;							
 		end
 	end
 
-	out
+
+	%trainingd(1:amount)
+
+	% Test with training set
+	for l=1:1
+  	input = training(:, l)';
+		numIn = size(input, 2);
+
+		% Setup target
+		target = zeros(10, 1);
+		target(trainingd(l)) = 1;
+		%for j = 1:10
+		%	if trainingd(j) == d
+		%		target(j) = 1;
+		%	end
+		%end
+
+		target
+		
+
+		% Calculate output with the weights (which were calculated in the previous step)
+		out = zeros(10, 1);
+		for j = 1:10
+			y = bias * weights(1, d);
+			for k = 1:size(input, 2)
+				y = y + input(j) * weights(k + 1, d);
+			end
+
+			if 1 / (1 + exp(-beta * y)) > 0.5
+				out(j, 1) = 1;
+			else
+				out(j, 1) = 0;
+			end
+		end
+
+		%out
+			
+		cm(trainingd(l), d + 1) 	= cm(trainingd(l), d + 1) + isequal(target, out);
+
+		% Compare out with target
+		%cm(	
+		%target(:, d + 1)
+		%out
+	end
+
+	%cm
 
 
-	trainingd(1:3)
 	for i=1:0
 				x=training(:,i); %the i-th row
 
