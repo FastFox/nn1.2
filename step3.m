@@ -26,7 +26,7 @@ weights = -1 * 2. * rand(dim + 1, 10);
 
 
 % Calculating weights
-
+tic()
 for i = 1:iterations
 	for d = 1:10
 		for e = 1:n
@@ -50,7 +50,7 @@ for i = 1:iterations
 		end
 	end
 end
-
+toc()
 cm = zeros(10, 10);
 out = 0;
 

@@ -120,9 +120,18 @@ Finally we used the EM-algorithm to find the optimal values of the mixture param
 
 \section{Task 2: Classiﬁcation of handwritten digits}
 \subsection{Problem Description}
+The goal of task 2 is to recognize hand-written digits. There are two sets available with images of the hand-written digits, with the labels known. So, this is a superviced learning problem. The first set is the training set. With this data we are going to make a model. The model can be checked with the test set. If the model also performs good on the test set, it indicates the model isn't overfit or overtrained. There are multiple solutions to this problem.
 
+\subsection{Problem Solutions}
+Distance-based classifier
+An image exists out of 256 points. Those points or pixels have a value. Based on these values we can say something about an image, so called feature. First we are going to load all the images of digit 0 of the training set and extract the features. Than we can calculate the average values. We repeat this for every digit. For a following image, where we don't know the label of, we extract also the features and compare them with the values of the averages we calculate in the step before. The one with the least distance will be probably the correct digit.
 
-\subsection{Problem Solution}
+The features are the center, the diameter, the radius and the standard deviation of distances from the center, but more and better features can be implemented. 
+
+Perceptron Algorithm
+A perceptron is a small neural network. It's based on inputs, weights and outputs. The inputs are the pixels of a image. With the correct weight it's possible to predict the right output. The weights gives importance to a specific pixel. In our case there is just one output node which can have two values. 0 or 1, or true and false. We built 10 models and every model gives an answer to the question "Is this hand-written image a *digit*?" So after checking an image with the 10 models, we can say which number the digit is. 
+
+Training the models costs a lot of time. In our setup we used just 40 training images and we used 10 iterations. It took 72 seconds to train and 58\% of the test set predicted the right answer. 
 
 
 
