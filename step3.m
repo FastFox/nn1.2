@@ -1,8 +1,13 @@
 clear all
 load digits
 
+% Shuffle train and test set
+together = [training testdata];
+shuffled = together(:, randperm(size(together, 2)));
+training = shuffled(:, 1:1707);
+testdata = shuffled(:, 1708:size(together, 2));
+
 % Single layer perceptron
-% Check if digit is digit zero or not
 
 n = 40; % Amount of examples used from the training set. Max 1707
 input = training(:, 1:n)';
