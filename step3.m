@@ -9,16 +9,16 @@ testdata = shuffled(:, 1708:size(together, 2));
 
 % Single layer perceptron
 
-n = 40; % Amount of examples used from the training set. Max 1707
+n = 1707; % Amount of examples used from the training set. Max 1707
 input = training(:, 1:n)';
 dim = 256;
-iterations = 20;
+iterations = 1000;
 
 bias = -1;
 alpha = 0.7; % Learning rate
 beta = 1.0;
 rand('state', sum(100 * clock));
-weights = -1 * 2. * rand(dim + 1, 10);
+weights = -1 * 2. * randn(dim + 1, 10);
 
 %target = zeros(n, 10);
 %for e = 1:n % for every example from the input set
@@ -33,52 +33,37 @@ weights = -1 * 2. * rand(dim + 1, 10);
 % Calculating weights
 tic()
 for i = 1:iterations
-	for d = 1:10
+% 	for d = 1:10
 		for e = 1:n
-			y = bias * weights(1, d);
-			for j = 1:dim
-				y = y + input(e, j) * weights(j + 1, d);
-			end
-			if 1 / (1 + exp(-beta * y)) > 0.5
-				out = 1;
-			else
-				out = 0;
-			end	
-	
-			delta = (trainingd(e) == d - 1) - out;
-			%delta = target(e, d) - out;
-			weights(1, d) = weights(1, d) + alpha * bias * delta;
-			for j = 1:dim
-				weights(j + 1, d) = weights(j + 1, d) + alpha * input(e, j) * delta;
-			end			
+%             y = bias * weights(1, d) + sum(input(e, :)' .* weights(2:end, d));        
+%             delta = (trainingd(e) == d - 1) - (y > 0);
+% 			weights(1, d) = weights(1, d) + alpha * bias * delta;
+%             weights(2:end, d) = weights(2:end, d) + alpha * input(e, :)' * delta;
+            y = bias * weights(1, :) + sum(repmat(input(e, :)',1,10) .* weights(2:end, :));  
+            delta = zeros(1,10);
+            delta(trainingd(e)+1) = 1;
+            delta = delta - (y > 0);
+			weights(1, :) = weights(1, :) + alpha * bias * delta;
+            weights(2:end, :) = weights(2:end, :) + alpha * input(e, :)' * delta;
 
 		end
-	end
+% 	end
 end
 toc()
 cm = zeros(10, 10);
 out = 0;
 
+if true
 % Predict the training set with the training set
 for e = 1:n
 	for d = 1:10
-		y = bias * weights(1, d);
-		for j = 1:dim
-			y = y + input(e, j) * weights(j + 1, d);
-		end
-		if 1 / (1 + exp(-beta * y)) > 0.5
-			out = 1;
-		else
-			out = 0;
-		end	
-
-		if out == 1
-			%if target(e, d) == 1 
+        y = bias * weights(1, d) + sum(input(e, :)' .* weights(2:end, d));
+		if y > 0
 			if trainingd(e) == d - 1
 				cm(d, d) = cm(d, d) + 1;
 			else
 				cm(trainingd(e) + 1, d) = cm(trainingd(e) + 1, d) + 1;
-			end
+            end
 		end
 	end
 end
@@ -94,18 +79,8 @@ input = testdata()';
 n = size(input, 1);
 for e = 1:n
 	for d = 1:10
-		y = bias * weights(1, d);
-		for j = 1:dim
-			y = y + input(e, j) * weights(j + 1, d);
-		end
-		if 1 / (1 + exp(-beta * y)) > 0.5
-			out = 1;
-		else
-			out = 0;
-		end	
-
-		if out == 1
-			%if target(e, d) == 1 
+    	y = bias * weights(1, d) + sum(input(e, :)' .* weights(2:end, d));
+		if y > 0
 			if testdatad(e) == d - 1
 				cm(d, d) = cm(d, d) + 1;
 			else
@@ -118,3 +93,5 @@ end
 cm
 
 ac = trace(cm) / n
+
+end % end if false
