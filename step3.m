@@ -12,13 +12,13 @@ testdata = shuffled(:, 1708:size(together, 2));
 n = 1707; % Amount of examples used from the training set. Max 1707
 input = training(:, 1:n)';
 dim = 256;
-iterations = 1000;
+iterations = 1000000;
 
 bias = -1;
-alpha = 0.7; % Learning rate
+alpha = 0.5; % Learning rate
 beta = 1.0;
 rand('state', sum(100 * clock));
-weights = -1 * 2. * randn(dim + 1, 10);
+weights = randn(dim + 1, 10);%-1 * 2 .* randn(dim + 1, 10);
 
 %target = zeros(n, 10);
 %for e = 1:n % for every example from the input set
@@ -34,19 +34,27 @@ weights = -1 * 2. * randn(dim + 1, 10);
 tic()
 for i = 1:iterations
 % 	for d = 1:10
-		for e = 1:n
-%             y = bias * weights(1, d) + sum(input(e, :)' .* weights(2:end, d));        
-%             delta = (trainingd(e) == d - 1) - (y > 0);
-% 			weights(1, d) = weights(1, d) + alpha * bias * delta;
-%             weights(2:end, d) = weights(2:end, d) + alpha * input(e, :)' * delta;
+		%for e = 1:n
+%             y = bias * weights(1, :) + sum(repmat(input(e, :)',1,10) .* weights(2:end, :));  
+%             delta = zeros(1,10);
+%             delta(trainingd(e)+1) = 1;
+%             delta = delta - (y > 0);
+% 			weights(1, :) = weights(1, :) + alpha * bias * delta;
+%             weights(2:end, :) = weights(2:end, :) + alpha * input(e, :)' * delta;
+            %Kies een random element
+            e = ceil(rand*n);
+            %Bereken de input
             y = bias * weights(1, :) + sum(repmat(input(e, :)',1,10) .* weights(2:end, :));  
+            %bereken de delta
             delta = zeros(1,10);
-            delta(trainingd(e)+1) = 1;
-            delta = delta - (y > 0);
+            delta(trainingd(e)+1) = 1;  %Delta moet alleen het goede getal 1 zijn, de rest 1
+            delta = delta - (y > 0); 
 			weights(1, :) = weights(1, :) + alpha * bias * delta;
-            weights(2:end, :) = weights(2:end, :) + alpha * input(e, :)' * delta;
-
-		end
+            weights(2:end, :) = weights(2:end, :) + alpha * input(e, :)' * delta;            
+            if mod(i,5000) == 0
+                disp(i/5000)
+            end
+		%end
 % 	end
 end
 toc()
