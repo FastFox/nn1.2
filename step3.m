@@ -1,28 +1,18 @@
 clear all
 load digits
 
-% Shuffle train and test set
-together = [training testdata];
-shuffled = together(:, randperm(size(together, 2)));
-training = shuffled(:, 1:1707);
-testdata = shuffled(:, 1708:size(together, 2));
-
-
 % Single layer perceptron
+n = 1707; % Amount of examples used from the training set. Max 1707
+input = training(:, 1:n); %1:n ipv indexes
 
-indexes = (trainingd == 0 | trainingd == 1 | trainingd == 2);
-input = training(:, indexes); %1:n ipv indexes
-n = size(input,1); % Amount of examples used from the training set. Max 1707
-trainingd = trainingd(indexes); %WEGHALEN
-
-num_nodes = 3;
+num_nodes = 10;
 dim = 256;
-iterations = 1000;
+iterations = 100;
 
-bias = -1;
-alpha = 0.05; % Learning rate
+bias = 1;
+alpha = 0.7; % Learning rate
 beta = 1.0;
-weights = randn(dim + 1, num_nodes);%-1 * 2 .* randn(dim + 1, 10);
+weights = randn(dim + 1, num_nodes)*10;%-1 * 2 .* randn(dim + 1, 10);
 weights(1:10,1)
 
 %target = zeros(n, 10);
@@ -39,7 +29,7 @@ counter = 0;
 % Calculating weights
 tic()
 for i = 1:iterations
-% 	for d = 1:10
+ 	for d = 1:num_nodes
 		for e = 1:n
 %             y = bias * weights(1, :) + sum(repmat(input(e, :)',1,10) .* weights(2:end, :));  
 %             delta = zeros(1,10);
@@ -48,27 +38,27 @@ for i = 1:iterations
 % 			weights(1, :) = weights(1, :) + alpha * bias * delta;
 %             weights(2:end, :) = weights(2:end, :) + alpha * input(e, :)' * delta;
             %Bereken de input
-            y = bias * weights(1, :) + sum(repmat(input(:, e),1,num_nodes) .* weights(2:end, :));  
+            y = bias * weights(1, d) + sum(input(:, e) .* weights(2:end, d));
             %bereken de delta
-            delta2 = zeros(1,num_nodes);
-            delta2(trainingd(e)+1) = 1;  %Delta moet alleen het goede getal 1 zijn, de rest 1
-            delta = delta2 - (y > 0);
+            delta = (trainingd(e)==d-1) - (y > 0);
+            %output, desired, difference
+            [trainingd(e) (trainingd(e)==d-1)];
             counter = counter + sum(abs(delta));
-            %[y>0; delta2; delta]
- 			weights(1, :) = weights(1, :) + alpha * bias * delta;
-            weights(2:end, :) = weights(2:end, :) + alpha * input(:, e) * delta;            
+ 			weights(1, d) = weights(1, d) + alpha * bias * delta;
+            weights(2:end, d) = weights(2:end, d) + alpha * input(:, e) * delta;            
         end
-        %disp(i)       
-        deltacounter(i) = counter;
-        counter = 0;
-% 	end
+    end
+    disp(i)      
+    deltacounter(i) = counter;
+    counter = 0;    
 end
 toc()
+plot(deltacounter);
+
 cm = zeros(10, 10);
 out = 0;
 
 weights(1:10,1)
-plot(deltacounter);
 
 if true
 % Predict the training set with the training set
