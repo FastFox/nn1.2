@@ -171,6 +171,22 @@ In this part there is experimented with different inputs. From a image we extrac
 5. The width is calculated the nearly the same. This feature is maybe better, because the averages are more spread.
 6. The average color value of a image. 
 
+The table ~\ref{tab:ac} for the statistics. All features are not good, but some of them are not bad. The amount of black pixels predicted around 30\% good of the test set. That is strange, because the black pixel feature could only predict 22\% good and we think there should be a correlation between black and white pixels. Width is better than height. That is explainable, because if we humans look at the 10 digits, we see that the height are all around the same and the width is not. Combining several simple features would be a good idea to predict digits.
+
+\begin{table}
+	\begin{tabular}{l c r}
+		Feature & Accuracy \\
+		Black & 30.1\% \\
+		White & 22.4\% \\
+		Gray & 22.9\% \\
+		Height & 13.1\% \\
+		Width & 34.4\% \\
+		Color & 30.5\% \\
+	\end{tabular}
+	\label{tab:ac}
+	\caption{Accuracy of the features}
+\end{table}
+
 
 
 \end{document}
