@@ -133,10 +133,34 @@ An image exists out of 256 points. Those points or pixels have a value. Based on
 
 The features are the center, the diameter, the radius and the standard deviation of distances from the center, but more and better features can be implemented. 
 
-Perceptron Algorithm
-A perceptron is a small neural network. It's based on inputs, weights and outputs. The inputs are the pixels of a image. With the correct weight it's possible to predict the right output. The weights gives importance to a specific pixel. In our case there is just one output node which can have two values. 0 or 1, or true and false. We built 10 models and every model gives an answer to the question "Is this hand-written image a *digit*?" So after checking an image with the 10 models, we can say which number the digit is. 
+When the center feature is used for training the model and the train set is checked, the accuracy is 86\%. When the model is checked on the test set, the accuracy is lowered to 80\%, but this is expected to be lower. See ~\fig{cm} for the confusion matrix. The numbers on the diagonal from top left to bottom right are the correctly classified digits. Most digits are on that line, but it's not perfect and there are errors. Digit 0 and digit 6 are often confused. 
 
-Training the models costs a lot of time. In our setup we used just 40 training images and we used 10 iterations. It took 72 seconds to train and x\% of the test set predicted the right answer. 
+\begin{table}
+	\begin{tabular}{l c r}
+	178 & 0 & 2 & 3 & 1 & 3 & 7 & 0 & 3 & 0 \\
+	0 & 120 & 0 & 0 & 3 & 0 & 0 & 2 & 2 & 5 \\
+	3 & 0 & 69 & 3 & 3 & 0 & 2 & 1 & 0 & 0 \\
+	2 & 0 & 6 & 61 & 0 & 6 & 0 & 0 & 6 & 0 \\
+	4 & 0 & 8 & 1 & 69 & 3 & 2 & 5 & 3 & 8 \\
+	2 & 0 & 1 & 8 & 0 & 38 & 1 & 0 & 3 0 \\
+	23 & 1 & 0 & 0 & 1 & 1 & 78 & 0 & 0 & 0 \\
+	1 & 0 & 2 & 0 & 1 & 0 & 0 & 50 & 0 & 5 \\
+	10 & 0 & 13 & 1 & 0 & 0 & 0 & 0 & 73 & 2 \\
+	1 & 0 & 0 & 2 & 8 & 4 & 0 & 6 & 2 & 68 \\
+	\end{tabular}
+	\caption{Confusion Matrix}
+	\label{tab:cm}
+\end{table}
+
+
+
+Perceptron Algorithm
+A perceptron is a small neural network. It's based on inputs, weights and outputs. The inputs are the pixels of a image. With the correct weight it's possible to predict the right output. The weights gives importance to a specific pixel. In our case there is just one output node which can have two values. 0 or 1, or true and false. We built 10 models and every model gives an answer to the question "Is this hand-written image a *digit*?" So after checking an image with the 10 models, we can say which number the digit is.
+
+Also here the models makes errors, but in this situations other errors can be made. The Distance-based classifier can classify a digit wrong, but with the perceptron it can happen that the a digit could not be classified or a digit can be classified as multiple classes. This makes a comparion between the confusion matrices difficult. 
+
+Logistic regression classifier
+
 
 
 
