@@ -161,6 +161,15 @@ Also here the models makes errors, but in this situations other errors can be ma
 
 Logistic regression classifier
 
+Alternative representations
+In this part there is experimented with different inputs. From a image we extract 6 more features:
+
+1. The amount of white pixels in a image. These values has the exact value of 1. Some digits need more digital ink compared to others, the reason why it could be a good ?distinctor? 
+2. We do the same for the white pixels.
+3. And the gray pixels.
+4. The height could also be a good feature to classify. The height is defined as the index of the row of the first white pixel minus the index of the row of the last white pixel plus 1. *The value of a white pixel is exact 1, not 0.99. 
+5. The width is calculated the nearly the same. This feature is maybe better, because the averages are more spread.
+6. The average color value of a image. 
 
 
 
