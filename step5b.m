@@ -51,8 +51,26 @@ end
 
 size(input)
 size(trainingd)
+output = zeros(size(trainingd,2),10);
 
-net = glm(6, 1, func);
-%net = glmtrain(net, options, input', trainingd);
-net = glmtrain(net, options, input', target(1, :));
-%output(:,d) = glmfwd(net, training');
+input = [input; training]; 
+input2 = [] %hetzelfde als hierboven, maar nu met input van testset met testset erachter
+
+for d=1:10
+    for j = 1:size(target,1)
+        if trainingd(j) == d-1
+            target(j, d) = 1;
+        end
+    end         
+    net = glm(262, 1, func);%262 = 256 + 6 nieuwe
+    net = glmtrain(net, options, input', target(:, d));
+    output(:,d) = glmfwd(net, input');  %hier moet input van testset in ipv trainset (dus input2 van hierboven)
+    for e=1:1707
+        if round(output(e,d))==1 && trainingd(e)==d-1
+            cm(d,d) = cm(d,d) + 1;
+        else
+            cm(trainingd(e)+1,d) = cm(trainingd(e)+1,d);
+        end
+    end          
+end
+cm

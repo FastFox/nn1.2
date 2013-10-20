@@ -25,7 +25,6 @@ function step4()
         net = glmtrain(net, options, training', target(:,d));
         %Test errors on training
         output(:,d) = glmfwd(net, training');
-        round(output(:,d))
         for e=1:1707
             if round(output(e,d))==1 && trainingd(e)==d-1
                 cm(d,d) = cm(d,d) + 1;
