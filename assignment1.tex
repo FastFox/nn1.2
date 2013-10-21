@@ -24,6 +24,7 @@
 \usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{float}
+\usepackage{graphicx}
 \restylefloat{table}
 
 \usepackage{listings}
@@ -106,7 +107,7 @@ For the third part we calculated the six parameters directly by using the class 
 	\end{center}
 \end{table}
 
-Subsequently we tried the brute-force technique to find the optimal values. The number of combinations was: $2,25 \cdot 10^{11}$. In total it would take $5,77 \cdot 10^6$ seconds or approximately $66,8$ days to brute-force on an Intel Core $i5$-$3470$.\\\\
+Subsequently we tried the brute-force technique to find the optimal values. The number of combinations was: $2,25 \cdot 10^{11}$. In total it would take $5,77 \cdot 10^6$ seconds or approximately $66,8$ days to brute-force on an Intel Core $i5$-$3470$. Of course we didn't run the entire algorithm, but only measured $10000$ iterations. Due to overhead the final runtime might be different, but we do not have the time to test it.\\\\
 
 Finally we used the EM-algorithm to find the optimal values of the mixture parameters. (See table \ref{table:data3}) First we initialized the Gaussian mixture model by using the k-means algorithm for $10$ iterations. Then we trained it using the given dataset for another $10$ generations. Training the model for $10$ iterations took  $0.004762$ seconds, so this approach is approximately $4.7 \cdot 10^{13}$ times faster than the brute-force approach. If we compare the values found with the ``true'' model, we see that there are no differences to $2$ decimals behind the comma. 
 
@@ -125,57 +126,76 @@ Finally we used the EM-algorithm to find the optimal values of the mixture param
 
 \section{Task 2: Classiﬁcation of handwritten digits}
 \subsection{Problem Description}
-The goal of task 2 is to recognize hand-written digits. There are two sets available with images of the hand-written digits, with the labels known. So, this is a superviced learning problem. The first set is the training set. With this data we are going to make a model. The model can be checked with the test set. If the model also performs good on the test set, it indicates the model isn't overfit or overtrained. There are multiple solutions to this problem.
+The goal of task $2$ is to recognize hand-written digits. There are two sets available with images of the hand-written digits, with known labels. So, this is a supervised learning problem. The first set is the training set. With this data we are going to make a model and then model can be checked with the testset. If the model performs well on the test set, it indicates the model isn't overfit or overtrained. There are multiple solutions to this problem.
 
 \subsection{Problem Solutions}
-Distance-based classifier
-An image exists out of 256 points. Those points or pixels have a value. Based on these values we can say something about an image, so called feature. First we are going to load all the images of digit 0 of the training set and extract the features. Than we can calculate the average values. We repeat this for every digit. For a following image, where we don't know the label of, we extract also the features and compare them with the values of the averages we calculate in the step before. The one with the least distance will be probably the correct digit.
+\subsubsection{Distance-based classifier}
+An image consists of an image of $16$x$16$ pixels. Those points or pixels have a value in greyscale. Based on these values we can say something about an image, a so called feature. First we load all the images of digit $0$ of the training set and extract the features. Then we can calculate the average values. We repeat this for every digit. For an image from the testset, where we don't know the label of, we extract also the features and compare them with the values of the averages we calculate in the step before. The one with the least distance will be probably the correct digit.
 
-The features are the center, the diameter, the radius and the standard deviation of distances from the center, but more and better features can be implemented. 
+The features we use are the center, the diameter, the radius and the standard deviation of distances from the center, but more and better features can be implemented. 
 
-When the center feature is used for training the model and the train set is checked, the accuracy is 86\%. When the model is checked on the test set, the accuracy is lowered to 80\%, but this is expected to be lower. See ~\fig{cm} for the confusion matrix. The numbers on the diagonal from top left to bottom right are the correctly classified digits. Most digits are on that line, but it's not perfect and there are errors. Digit 0 and digit 6 are often confused. 
+When the center feature is used for training the model and the trainingset is checked, the accuracy is $86\%$. When the model is checked on the test set, the accuracy is lowered to $80\%$, but this is expected to be lower. See table \ref{tab:cm} for the confusion matrix. The numbers on the diagonal from top left to bottom right are the correctly classified digits. Most digits are on that line, but it's not perfect and there are errors. Digit $0$ and digit $6$ are often confused. 
 
-\begin{table}
-	\begin{tabular}{l c r}
-	178 & 0 & 2 & 3 & 1 & 3 & 7 & 0 & 3 & 0 \\
-	0 & 120 & 0 & 0 & 3 & 0 & 0 & 2 & 2 & 5 \\
-	3 & 0 & 69 & 3 & 3 & 0 & 2 & 1 & 0 & 0 \\
-	2 & 0 & 6 & 61 & 0 & 6 & 0 & 0 & 6 & 0 \\
-	4 & 0 & 8 & 1 & 69 & 3 & 2 & 5 & 3 & 8 \\
-	2 & 0 & 1 & 8 & 0 & 38 & 1 & 0 & 3 0 \\
-	23 & 1 & 0 & 0 & 1 & 1 & 78 & 0 & 0 & 0 \\
-	1 & 0 & 2 & 0 & 1 & 0 & 0 & 50 & 0 & 5 \\
-	10 & 0 & 13 & 1 & 0 & 0 & 0 & 0 & 73 & 2 \\
-	1 & 0 & 0 & 2 & 8 & 4 & 0 & 6 & 2 & 68 \\
-	\end{tabular}
+\begin{table}[H]
+	\begin{center}
+		\begin{tabular}{llllllllll}
+				178 & 0 & 2 & 3 & 1 & 3 & 7 & 0 & 3 & 0 \\
+				0 & 120 & 0 & 0 & 3 & 0 & 0 & 2 & 2 & 5 \\
+				3 & 0 & 69 & 3 & 3 & 0 & 2 & 1 & 0 & 0 \\
+				2 & 0 & 6 & 61 & 0 & 6 & 0 & 0 & 6 & 0 \\
+				4 & 0 & 8 & 1 & 69 & 3 & 2 & 5 & 3 & 8 \\
+				2 & 0 & 1 & 8 & 0 & 38 & 1 & 0 & 3 0 \\
+				23 & 1 & 0 & 0 & 1 & 1 & 78 & 0 & 0 & 0 \\
+				1 & 0 & 2 & 0 & 1 & 0 & 0 & 50 & 0 & 5 \\
+				10 & 0 & 13 & 1 & 0 & 0 & 0 & 0 & 73 & 2 \\
+				1 & 0 & 0 & 2 & 8 & 4 & 0 & 6 & 2 & 68 \\
+		\end{tabular}
+	\end{center}
 	\caption{Confusion Matrix}
 	\label{tab:cm}
 \end{table}
 
+\subsubsection{Perceptron Algorithm}
+A perceptron is a small neural network. It's based on inputs, weights and outputs. The inputs are the pixels of a image. With the correct weight it's possible to predict the right output. The weights gives importance to a specific pixel. In our case there is just one output node which can have two values. $0$ or $1$, or true and false. We built a perceptron with $10$ nodes. Each node $x$ answers the question ``Is this hand-written image digit $x$?'' So after checking an image with each of the $10$ nodes, we should be able to classify the input data.\\
 
+On the trainingset the perceptron achieves a perfect accuracy, as proven by the Covers theorem. On the trainingset the trained perceptron reaches an accuracy of about $87$\%. If we look at the errors it makes, we see that digit $8$ is sometimes classified as a $3$. Also $9$ and $4$ are hard to separate.\\
 
-Perceptron Algorithm
-A perceptron is a small neural network. It's based on inputs, weights and outputs. The inputs are the pixels of a image. With the correct weight it's possible to predict the right output. The weights gives importance to a specific pixel. In our case there is just one output node which can have two values. 0 or 1, or true and false. We built 10 models and every model gives an answer to the question "Is this hand-written image a *digit*?" So after checking an image with the 10 models, we can say which number the digit is.
+Training the perceptron takes about $60$ seconds. The perceptron is trained with the trainingset, which is forwarded through the net for $100$ iterations. You can see the error decreasing in figure \ref{fig:perceptronerror}\\
 
-Also here the models makes errors, but in this situations other errors can be made. The Distance-based classifier can classify a digit wrong, but with the perceptron it can happen that the a digit could not be classified or a digit can be classified as multiple classes. This makes a comparion between the confusion matrices difficult. 
+\begin{figure}
+	\centering
+		\includegraphics[width=\textwidth]{D:/Universiteit/NN/nn1.2/perceptronerror.png}
+	\vspace{-0.2in}
+	\caption{Error decrease of perceptron}
+	\label{fig:perceptronerror}
+\vspace{-1in}
+\end{figure}
 
-Logistic regression classifier
+The models make errors on the testset, but it can be proven that a perceptron always converges on linearly separable data. With the perceptron other errors can be made as well. The Distance-based classifier can classify a digit wrong, but with the perceptron it can happen that the a digit could not be classified or a digit can be classified as multiple classes. This makes a comparion between the confusion matrices difficult. 
 
-Alternative representations
-In this part there is experimented with different inputs. From a image we extract 6 more features:
+\subsubsection{Logistic regression classifier}
+For the logistic regression classifier we used the built in function from Netlab. As described in the assignment we built a network with a similar topology as the perceptron. Again each node classifies only $1$ digit.\\
+Compared to the perceptron the logistic regression classifier produced less accurate results, but it was a lot faster than the perceptron algorithm. On the trainingset an accuracy of $89$ percent was achieved, lowering to $75$\% on the testset. All digits that are classified are classified correctly, but not all digits are classified.
 
-1. The amount of white pixels in a image. These values has the exact value of 1. Some digits need more digital ink compared to others, the reason why it could be a good ?distinctor? 
-2. We do the same for the white pixels.
-3. And the gray pixels.
-4. The height could also be a good feature to classify. The height is defined as the index of the row of the first white pixel minus the index of the row of the last white pixel plus 1. *The value of a white pixel is exact 1, not 0.99. 
-5. The width is calculated the nearly the same. This feature is maybe better, because the averages are more spread.
-6. The average color value of a image. 
+\subsubsection{Alternative representations}
+In this part there is experimented with different inputs. From a image we extract $6$ more features:
 
-The table ~\ref{tab:ac} for the statistics. All features are not good, but some of them are not bad. The amount of black pixels predicted around 30\% good of the test set. That is strange, because the black pixel feature could only predict 22\% good and we think there should be a correlation between black and white pixels. Width is better than height. That is explainable, because if we humans look at the 10 digits, we see that the height are all around the same and the width is not. Combining several simple features would be a good idea to predict digits.
+\begin{itemize}
+\item The amount of white pixels in a image. These values has the exact value of $1$. Some digits need more digital ink compared to others, the reason why it could be a good feature for separating digits.
+\item We do the same for the black pixels.
+\item And the gray pixels.
+\item The height could also be a good feature to classify. The height is defined as the index of the row of the first white pixel minus the index of the row of the last white pixel plus $1$. *The value of a white pixel is exact $1$, not $0.99$. 
+\item The width is calculated the nearly the same. This feature might even be better, because the averages are more spread.
+\item The average color value of a image. 
+\end{itemize}
 
-\begin{table}
-	\begin{tabular}{l c r}
+The table \ref{tab:ac} for the statistics. Though the features do not produce the best results, the results can be used to compare the features.. The amount of black pixels predicted around $30$\% of the testset correctly. That is strange, because the black pixel feature could only predict $22$\%  correctly and we think there should be a correlation between black and white pixels. Width is better than height. That is explainable, because if we humans look at the $10$ digits, we see that the height are all around the same and the width is not. Combining several simple features would be a good idea to predict digits. 
+
+\begin{table}[H]
+	\begin{center}
+	\begin{tabular}{l|l}
 		Feature & Accuracy \\
+		\hline
 		Black & 30.1\% \\
 		White & 22.4\% \\
 		Gray & 22.9\% \\
@@ -183,10 +203,11 @@ The table ~\ref{tab:ac} for the statistics. All features are not good, but some 
 		Width & 34.4\% \\
 		Color & 30.5\% \\
 	\end{tabular}
+	\end{center}	
 	\label{tab:ac}
 	\caption{Accuracy of the features}
 \end{table}
 
-
+If input these as extra features into the logistic regression classifier, we achieve better results than before. 89\% on the trainingset and 90\% on the testset.
 
 \end{document}
