@@ -160,7 +160,7 @@ A perceptron is a small neural network. It's based on inputs, weights and output
 
 On the trainingset the perceptron achieves a perfect accuracy, as proven by the Covers theorem. On the trainingset the trained perceptron reaches an accuracy of about $87$\%. If we look at the errors it makes, we see that digit $8$ is sometimes classified as a $3$. Also $9$ and $4$ are hard to separate.\\
 
-Training the perceptron takes about $60$ seconds. The perceptron is trained with the trainingset, which is forwarded through the net for $100$ iterations. You can see the error decreasing in figure \ref{fig:perceptronerror}\\
+Training the perceptron takes about $60$ seconds. The perceptron is trained with the trainingset, which is forwarded through the net for $100$ iterations. You can see the error decreasing in figure \ref{fig:perceptronerror}.\\
 
 \begin{figure}
 	\centering
@@ -189,7 +189,7 @@ In this part there is experimented with different inputs. From a image we extrac
 \item The average color value of a image. 
 \end{itemize}
 
-The table \ref{tab:ac} for the statistics. Though the features do not produce the best results, the results can be used to compare the features.. The amount of black pixels predicted around $30$\% of the testset correctly. That is strange, because the black pixel feature could only predict $22$\%  correctly and we think there should be a correlation between black and white pixels. Width is better than height. That is explainable, because if we humans look at the $10$ digits, we see that the height are all around the same and the width is not. Combining several simple features would be a good idea to predict digits. 
+See table \ref{tab:accuracy} for the statistics. Though the features do not produce the best results, the results can be used to compare the features.. The amount of black pixels predicted around $30$\% of the testset correctly. That is strange, because the black pixel feature could only predict $22$\%  correctly and we think there should be a correlation between black and white pixels. Width is better than height. That is explainable, because if we humans look at the $10$ digits, we see that the height are all around the same and the width is not. Combining several simple features would be a good idea to predict digits. 
 
 \begin{table}[H]
 	\begin{center}
@@ -204,8 +204,8 @@ The table \ref{tab:ac} for the statistics. Though the features do not produce th
 		Color & 30.5\% \\
 	\end{tabular}
 	\end{center}	
-	\label{tab:ac}
 	\caption{Accuracy of the features}
+	\label{tab:accuracy}
 \end{table}
 
 If input these as extra features into the logistic regression classifier, we achieve better results than before. 89\% on the trainingset and 90\% on the testset.
