@@ -1,7 +1,6 @@
 load digits
 
-%size(training)
-%blackPixels = zeros(1, 1707);
+% Initialize the 6 features 
 blackPixels = zeros(1, 10);
 whitePixels = zeros(1, 10);
 grayPixels = zeros(1, 10);
@@ -9,8 +8,8 @@ height = zeros(1, 10);
 width = zeros(1, 10);
 color = zeros(1, 10);
 amountOfDigits = zeros(1, 10);
-colormap gray
 
+% Calculating the average of the 6 features for every digit.
 for i = 1:1707
 	% Extract amount of (black | white | gray) pixels
 	black = size(find(training(:, i) == -1), 1);
@@ -20,7 +19,6 @@ for i = 1:1707
 	blackPixels(trainingd(i) + 1) = blackPixels(trainingd(i) + 1) + black;
 	whitePixels(trainingd(i) + 1) = blackPixels(trainingd(i) + 1) + white;
 	grayPixels(trainingd(i) + 1) = blackPixels(trainingd(i) + 1) + gray;
-
 
 	% Calculate height
 	firstWhitePixelIndex = find(training(:, i) == 1, 1, 'first');
@@ -44,9 +42,6 @@ for i = 1:1707
 	% Counting total amount of digits per class
 	amountOfDigits(trainingd(i) + 1) = amountOfDigits(trainingd(i) + 1) + 1;
 end
-
-%blackPixels
-%amountOfDigits
 
 % Average amount of (black | white | gray) pixels per digit
 avgBlack = blackPixels ./ amountOfDigits;
